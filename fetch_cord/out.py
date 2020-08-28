@@ -172,11 +172,8 @@ def neofetch(loop):
 
     elif not neofetchwin:
         filepath = "/tmp/out.txt"
-        if args.config:
-            filepath = args.config
-        if not args.config:
-            with open(filepath, 'w') as f:
-                print(baseinfo, file=f)
+        with open(filepath, 'w') as f:
+            print(baseinfo, file=f)
         with open(filepath, "rt") as f:
             for line in f:
                 if line.find(cpu) != -1:
@@ -231,7 +228,7 @@ def neofetch(loop):
                     cirrusgpuline.append(line.rstrip('\n'))
 
     try:
-        if os.path.isfile(filepath) and not args.config:
+        if os.path.isfile(filepath):
             os.remove(filepath)
     except FileNotFoundError:
         pass
@@ -274,7 +271,7 @@ if os.name != "nt" or baseinfo:
     wmid = get_wmid(wmline)
 
     lapordesk = set_laptop(laptop, sysosid)
-    batteryline = check_batteryline(batteryline, lapordesk)
+    batteryline = check_batteryline(batteryline, hostline)
 
     themeline = check_theme(themeline)
     fontline = check_fontline(fontline)
@@ -310,8 +307,8 @@ if sysosid.lower() in ['windows', 'linux', 'opensuse']:
     sysosid = get_long_os(sysosline)
 
 cpuvendor = cpuline[0].split()[1].replace("Intel(R)", "Intel")
-cpumodel = get_cpumodel(cpuline, cpuvendor)
-cpuinfo = get_cpuinfo(cpuline)
+cpumodel = get_cpumodel(cpuline, cpuvendor, baseinfo)
+cpuinfo = get_cpuinfo(cpuline, baseinfo)
 memline = check_memline(memline)
 diskline = check_diskline(diskline, cpuinfo)
 

@@ -78,7 +78,7 @@ if os.name != "nt" and deid == "unity":
 args = parse_args()
 
 
-def get_host(hosts):
+def get_host(hostlist):
     hostsplit = hostline[0].split()
     hostid = []
     for line in range(len(hostsplit)):
@@ -100,7 +100,7 @@ def get_host(hosts):
     return hostid
 
 
-def get_mobo(moboline):
+def get_mobo(moboline, hostlist):
         mobosplit = moboline[0].split()
         moboid = []
         for line in range(len(mobosplit)):
@@ -139,11 +139,11 @@ def get_shell_id(shells, shellid):
 
 
 def get_hostappid(hosts):
-    return hosts[hostid.lower()]
+    return hosts[get_host(hostlist).lower()]
 
 
 def get_moboid(motherboards):
-    return motherboards[moboid.lower()]
+    return motherboards[get_mobo(moboline, hostlist).lower()]
 
 
 def get_desktopid(deid, wmid):
@@ -185,14 +185,6 @@ def get_gpuid(gpuvendor):
     return gpuid
 
 
-def get_host_or_mobo(motherboards, hosts):
-    if os.name != "nt" and hostline:
-        return get_host(hosts)
-
-    elif os.name == "nt" and moboline:
-        return get_mobo(moboline)
-
-
 if sysosid.lower() == "macos":
     devicetype = "N/A"
     bigicon = "unknown"
@@ -203,15 +195,11 @@ if sysosid.lower() == "macos":
 
 gpuid = get_gpuid(gpuvendor)
 
-moboid = "Motherboard: N/A"
-hostid = "Host: N/A"
 
-
-if os.name != "nt":
-    shell = get_shell_id(shells, shellid)
+if os.name != "nt" or baseinfo:
+    shellid = get_shell_id(shells, shellid)
     desktopid = get_desktopid(deid, wmid)
     try:
-        hostid = get_host_or_mobo(motherboards, hosts)
         hostappid = get_hostappid(hosts)
     except KeyError:
         print("Unknown Host, contact us on github to resolve this.(Keyerror)")
@@ -222,16 +210,13 @@ if os.name != "nt":
         print("Unsupported Terminal. contact us on github to resolve this.(Keyerror)")
         termappid = '745691250186911796'
 
-try:
-    moboid = get_host_or_mobo(motherboards, hosts)
-except KeyError:
-    print("Unknown Motherboard, contact us on github to resolve this.(Keyerror)")
-    moboid = "unknown"
+if os.name == "nt" and neofetchwin:
+    try:
+        moboid = get_moboid(motherboards)
+    except KeyError:
+        print("Unknown Motherboard, contact us on github to resolve this.(Keyerror)")
+        moboid = "unknown"
 
-#try:
-#    hostid = get_host_or_mobo(motherboards, hosts)
-#except KeyError:
-#    hostid = ""
 
 try:
     appid = get_appid(distros, sysosid)
@@ -258,11 +243,12 @@ if baseinfo:
     if not shellid:
         shellid = "N/A"
 
-if not hostid:
-    hostid = "N/A"
+    hostid = get_host(hostlist)
+    if not hostid:
+        hostid = "N/A"
 
 if args.debug:
     if baseinfo:
-        test_debug(deid=deid, wmid=wmid, termid=termid, shellid=shellid, moboid=moboid, gpuvendor=gpuvendor, cpumodel=cpumodel, hostid=hostid)
+        test_debug(deid=deid, wmid=wmid, termid=termid, shellid=shellid, moboid="N/A", gpuvendor=gpuvendor, cpumodel=cpumodel, hostid=hostid)
     else:
-        test_debug(moboline=moboline, moboid=moboid, gpuvendor=gpuvendor, cpumodel=cpumodel, hostid=hostid)
+        test_debug(moboline=moboline, moboid=moboid, gpuvendor=gpuvendor, cpumodel=cpumodel, hostid="N/A")
