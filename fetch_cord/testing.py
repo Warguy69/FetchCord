@@ -114,11 +114,12 @@ def get_mobo(moboline, hostlist):
         pass
     return moboid
 
-if args.terminal and args.terminal in terminallist:
+if args.terminal in terminallist:
     termid = args.terminal
-    termline[0] = "Terminal: %s" % args.terminal
+    print(args.terminal)
+    termline = "Terminal: %s" % args.terminal
 
-elif args.terminal and args.termninal not in terminallist:
+elif args.terminal and args.terminal not in terminallist:
     print("\nInvalid terminal, only %s are supported.\n"
             "Please make a github issue if you would like to have your terminal added.\n"
             "https://github.com/MrPotatoBobx/FetchCord" % terminallist)
